@@ -1,4 +1,6 @@
-FROM daocloud.io/php_ity/docker-ubuntu
+#FROM centos:6
+
+FROM sequenceiq/pam:centos-6.5
 
 MAINTAINER 1396981439@qq.com
 
@@ -6,28 +8,36 @@ USER root
 
 RUN cp /etc/skel/.bash* ~
 
+RUN yum clean all; rpm --rebuilddb; yum install -y curl which tar sudo rsync openssh-server openssh-clients initscripts python-argparse nano mlocate
 
+RUN yum clean all; rpm --rebuilddb; yum update -y libselinux; yum clean all; rpm --rebuilddb;
+
+# passwordless ssh
+RUN ssh-keygen -q -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key
+RUN ssh-keygen -q -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key
+RUN ssh-keygen -q -N "" -t rsa -f /root/.ssh/id_rsa
+RUN cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys
 
 # java
+RUN curl -LO 'http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.rpm' -H 'Cookie: oraclelicense=accept-securebackup-cookie'
+RUN rpm -i jdk-8u131-linux-x64.rpm
+RUN rm jdk-8u131-linux-x64.rpm
 
-# RUN wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" -P /usr/local "https://download.oracle.com/otn-pub/java/jdk/8u201-b09/42970487e3af4f5aa5bca3f542482c60/jdk-8u201-linux-x64.tar.gz" && \
-# mv jdk-8u201-linux-x64.tar.gz jdk-8u201-linux-x64.tar && tar -zxvf jdk-8u201-linux-x64.tar && mv jdk1.8.0_201 jdk && rm -rf jdk-8u201-linux-x64.tar
- 
+ENV JAVA_HOME /usr/java/default
+ENV PATH $PATH:$JAVA_HOME/bin
+
+RUN rm /usr/bin/java && ln -s $JAVA_HOME/bin/java /usr/bin/java
+
 ARG APACHE_MIRROR=https://www.apache.org/dist
-# #设置环境变量
-# ENV JAVA_HOME /usr/local/jdk
-# ENV CLASSPATH .:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
-# ENV PATH $PATH:$JAVA_HOME/bin:$JAVA_HOME/jre/bin
-
 
 # maven
-# RUN curl -LO 'http://mirror.olnevhost.net/pub/apache/maven/maven-3/3.0.5/binaries/apache-maven-3.0.5-bin.tar.gz'
-# RUN tar xvf apache-maven-3.0.5-bin.tar.gz
-# RUN mv apache-maven-3.0.5  /usr/local/apache-maven
-# RUN echo "export M2_HOME=/usr/local/apache-maven" >> ~/.bashrc
-# RUN echo "export M2=$M2_HOME/bin" >> ~/.bashrc
-# RUN echo "export PATH=$M2:$PATH" >> ~/.bashrc
-# RUN source ~/.bashrc
+RUN curl -LO 'http://mirror.olnevhost.net/pub/apache/maven/maven-3/3.0.5/binaries/apache-maven-3.0.5-bin.tar.gz'
+RUN tar xvf apache-maven-3.0.5-bin.tar.gz
+RUN mv apache-maven-3.0.5  /usr/local/apache-maven
+RUN echo "export M2_HOME=/usr/local/apache-maven" >> ~/.bashrc
+RUN echo "export M2=$M2_HOME/bin" >> ~/.bashrc
+RUN echo "export PATH=$M2:$PATH" >> ~/.bashrc
+RUN source ~/.bashrc
 
 # Hadoop
 ARG HADOOP_VERSION=2.7.3
