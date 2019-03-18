@@ -1,5 +1,5 @@
 FROM ubuntu:16.04
-MAINTAINER Abulo Hoo <abulo.hoo@gmail.com>
+MAINTAINER PHP Hoo <1396981439@qq.com>
 #环境变量
 ENV HBASE_VERSION=2.0.0 HBASE_MINOR_VERSION=2.0 PHOENIX_VERSION=5.0.0 HBASE_HADOOP_VERSION=2.7.4 REPLACEMENT_HADOOP_VERSION=2.8.5 JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 JRE_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre
 #安装jdk
