@@ -23,32 +23,10 @@
 <configuration>
   <property>
     <name>hbase.rootdir</name>
-    <value>hdfs://HOSTNAME:9000/hbase</value>
+    <value>hdfs://localhost:9000/hbase</value>
   </property>
   <property>
     <name>hbase.cluster.distributed</name>
     <value>true</value>
-  </property>
-  <property>
-    <name>fs.hdfs.impl</name>
-    <value>org.apache.hadoop.hdfs.DistributedFileSystem</value>
-  </property>
-  <property>
-    <name>phoenix.functions.allowUserDefinedFunctions</name>
-    <value>true</value>
-  </property>
-  <property>
-    <name>hbase.dynamic.jars.dir</name>
-    <value>${hbase.rootdir}/lib</value>
-    <description>
-      The directory from which the custom udf jars can be loaded
-      dynamically by the phoenix client/region server without the need to restart. However,
-      an already loaded udf class would not be un-loaded. See
-      HBASE-1936 for more details.
-    </description>
-  </property>
-  <property>
-    <name>lucene.path</name>
-    <value>${hbase.rootdir}/lucene</value>
   </property>
 </configuration>
