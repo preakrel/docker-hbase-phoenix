@@ -14,7 +14,7 @@ RUN mkdir /tmp/zookeeper
 ENV HBASE_MAJOR 2.0
 ENV HBASE_MINOR 4
 ENV HBASE_VERSION "${HBASE_MAJOR}.${HBASE_MINOR}"
-RUN curl -s http://apache.mirror.gtcomm.net/hbase/$HBASE_VERSION/hbase-$HBASE_VERSION-bin.tar.gz | tar -xvf -C /usr/local/
+RUN curl -s http://apache.mirror.gtcomm.net/hbase/$HBASE_VERSION/hbase-$HBASE_VERSION-bin.tar.gz | tar -x -C /usr/local/
 RUN cd /usr/local && ln -s ./hbase-$HBASE_VERSION hbase
 ENV HBASE_HOME /usr/local/hbase
 ENV PATH $PATH:$HBASE_HOME/bin
