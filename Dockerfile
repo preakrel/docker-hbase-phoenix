@@ -66,7 +66,20 @@ RUN  sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/' /etc/apt/sources.list \
     # Clean up
     &&  rm -rf  /var/tmp/*
 
-EXPOSE 2181 16010 16020 16030 8765
+RUN rm /opt/hbase/conf/hbase-site.xml
+ADD hbase-site.xml /opt/hbase/conf/hbase-site.xml
+
+EXPOSE 2181 16010 16020 16030 
+
+# Mapred ports
+EXPOSE 10020 19888
+#Yarn ports
+EXPOSE 8030 8031 8032 8033 8040 8042 8088
+# Hdfs ports
+EXPOSE 50010 50020 50070 50075 50090 8020 9000
+#Phoenix QS
+EXPOSE 8765
+
 ADD start-hbase-phoenix.sh /start-hbase-phoenix.sh
 RUN chmod 777 -R /start-hbase-phoenix.sh && chown -R root.root /start-hbase-phoenix.sh && chown -R root.root /opt && chmod 777 -R /opt
 CMD ["/start-hbase-phoenix.sh"]
