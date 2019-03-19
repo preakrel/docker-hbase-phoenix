@@ -5,7 +5,10 @@ ENV ZOOKEEPER_VERSION=3.4.13 HBASE_MAJOR=2.0 HBASE_MINOR=4 HBASE_VERSION="$HBASE
 
 COPY config/* /opt/config/
 
-RUN cd /opt \
+USER root
+WORKDIR /opt
+
+RUN chmod -R 777 /opt && cd /opt \
     # zookeeper
     && wget -q -O zookeeper-$ZOOKEEPER_VERSION.tar.gz ${WEB}/zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz \
     && tar -zxf zookeeper-$ZOOKEEPER_VERSION.tar.gz \
