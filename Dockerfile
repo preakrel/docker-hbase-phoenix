@@ -10,7 +10,7 @@ WORKDIR /opt
 
 RUN chmod -R 777 /opt && cd /opt \
     # zookeeper
-    && wget -q -O zookeeper-$ZOOKEEPER_VERSION.tar.gz ${WEB}/zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz \
+    && wget -q -O zookeeper-$ZOOKEEPER_VERSION.tar.gz $WEB/zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz \
     && tar -zxf zookeeper-$ZOOKEEPER_VERSION.tar.gz \
     && mv /opt/zookeeper-$ZOOKEEPER_VERSION /opt/zookeeper \
     && mv /opt/zookeeper/conf/zoo_sample.cfg /opt/zookeeper/conf/zoo.cfg \
