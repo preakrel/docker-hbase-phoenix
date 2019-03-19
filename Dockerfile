@@ -5,7 +5,7 @@ ENV ZOOKEEPER_VERSION=3.4.13 HBASE_MAJOR=2.0 HBASE_MINOR=4 HBASE_VERSION="$HBASE
 
 COPY config/* /opt/config/
 
-RUN  chmod -R 777 /opt && cd /opt \
+RUN cd /opt \
     # zookeeper
     && wget -q -O zookeeper-$ZOOKEEPER_VERSION.tar.gz ${WEB}/zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz \
     && tar -zxf zookeeper-$ZOOKEEPER_VERSION.tar.gz \
@@ -37,7 +37,7 @@ RUN  chmod -R 777 /opt && cd /opt \
     && cp -rf /opt/phoenix/bin/tephra-env.sh /opt/hbase/bin/tephra-env.sh \ 
     && mv /opt/config/bootstrap-phoenix.sh / \
     && rm -rf  /var/tmp/* /tmp/* \
-    && chmod 777 -R /opt && chown root:root /bootstrap-phoenix.sh&& chmod 777 /bootstrap-phoenix.sh
+    && chmod 777 -R /opt && chown root:root /bootstrap-phoenix.sh && chmod 777 /bootstrap-phoenix.sh
 
 CMD ["/bootstrap-phoenix.sh", "-bash"]
 
