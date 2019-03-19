@@ -1,40 +1,44 @@
 FROM daocloud.io/php_ity/docker-hadoop
 MAINTAINER 1396981439@qq.com
 
-# zookeeper
-ENV ZOOKEEPER_VERSION 3.4.13
-RUN curl -s http://mirror.csclub.uwaterloo.ca/apache/zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz | tar -xz -C /usr/local/
-RUN cd /usr/local && ln -s ./zookeeper-$ZOOKEEPER_VERSION zookeeper
-ENV ZOO_HOME /usr/local/zookeeper
-ENV PATH $PATH:$ZOO_HOME/bin
-RUN mv $ZOO_HOME/conf/zoo_sample.cfg $ZOO_HOME/conf/zoo.cfg
-RUN mkdir /tmp/zookeeper
+ENV ZOOKEEPER_VERSION=3.4.13 HBASE_MAJOR=2.0 HBASE_MINOR=4 HBASE_VERSION="$HBASE_MAJOR}.${HBASE_MINOR}" PHOENIX_VERSION=5.0.0  WEB=http://mirrors.hust.edu.cn/apache
 
-# hbase
-ENV HBASE_MAJOR 2.0
-ENV HBASE_MINOR 4
-ENV HBASE_VERSION "${HBASE_MAJOR}.${HBASE_MINOR}"
-RUN curl -s http://apache.mirror.gtcomm.net/hbase/$HBASE_VERSION/hbase-$HBASE_VERSION-bin.tar.gz | tar -xz -C /usr/local/
-RUN cd /usr/local && ln -s ./hbase-$HBASE_VERSION hbase
-ENV HBASE_HOME /usr/local/hbase
-ENV PATH $PATH:$HBASE_HOME/bin
-RUN rm $HBASE_HOME/conf/hbase-site.xml
-ADD hbase-site.xml $HBASE_HOME/conf/hbase-site.xml
+COPY config/* /opt/config/
 
-# phoenix
-ENV PHOENIX_VERSION 5.0.0
-RUN curl -s http://apache.mirror.vexxhost.com/phoenix/phoenix-$PHOENIX_VERSION-HBase-$HBASE_MAJOR/bin/phoenix-$PHOENIX_VERSION-HBase-$HBASE_MAJOR-bin.tar.gz | tar -xz -C /usr/local/
-RUN cd /usr/local && ln -s ./phoenix-$PHOENIX_VERSION-HBase-$HBASE_MAJOR-bin phoenix
-ENV PHOENIX_HOME /usr/local/phoenix
-ENV PATH $PATH:$PHOENIX_HOME/bin
-RUN cp $PHOENIX_HOME/phoenix-core-$PHOENIX_VERSION-HBase-$HBASE_MAJOR.jar $HBASE_HOME/lib/phoenix.jar
-RUN cp $PHOENIX_HOME/phoenix-server-$PHOENIX_VERSION-HBase-$HBASE_MAJOR.jar $HBASE_HOME/lib/phoenix-server.jar
+RUN  chmod -R 777 /opt && cd /opt \
+    # zookeeper
+    && wget -q -O zookeeper-$ZOOKEEPER_VERSION.tar.gz ${WEB}/zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz \
+    && tar -zxf zookeeper-$ZOOKEEPER_VERSION.tar.gz \
+    && mv /opt/zookeeper-$ZOOKEEPER_VERSION /opt/zookeeper \
+    && mv /opt/zookeeper/conf/zoo_sample.cfg /opt/zookeeper/conf/zoo.cfg \
+    && chmod -R +x /opt/zookeeper \
+    && mkdir /tmp/zookeeper \
+    && rm -rf zookeeper-$ZOOKEEPER_VERSION.tar.gz \
+    # hbase
+    && wget -q -O hbase-$HBASE_VERSION-bin.tar.gz $WEB/hbase/$HBASE_VERSION/hbase-$HBASE_VERSION-bin.tar.gz \
+    && tar -xzf hbase-$HBASE_VERSION-bin.tar.gz \
+    && mv /opt/hbase-$HBASE_VERSION /opt/hbase \
+    && chmod -R +x /opt/hbase \
+    && rm -rf hbase-$HBASE_VERSION-bin.tar.gz \
+    && rm -rf /opt/hbase/docs \
+    && rm /opt/hbase/conf/hbase-site.xml \
+    && mv /opt/config/hbase-site.xml /opt/hbase/conf/hbase-site.xml\
+    # phoenix
+    && wget -q -O apache-phoenix-$PHOENIX_VERSION-HBase-$HBASE_MAJOR-bin.tar.gz $WEB/phoenix/apache-phoenix-$PHOENIX_VERSION-HBase-$HBASE_MAJOR/bin/apache-phoenix-$PHOENIX_VERSION-HBase-$HBASE_MAJOR-bin.tar.gz \
+    && tar -xzf apache-phoenix-$PHOENIX_VERSION-HBase-$HBASE_MAJOR-bin.tar.gz  \
+    && mv apache-phoenix-$PHOENIX_VERSION-HBase-$HBASE_MAJOR-bin phoenix \
+    && chmod -R +x /opt/phoenix \
+    && rm -rf  apache-phoenix-$PHOENIX_VERSION-HBase-$HBASE_MAJOR-bin.tar.gz \
+    && rm -rf /opt/phoenix/examples \
+    # 配置hbase & Phoenix
+    && cp /opt/phoenix/phoenix-$PHOENIX_VERSION-HBase-$HBASE_MAJOR-server.jar /opt/hbase/lib/ \
+    && cp /opt/phoenix/phoenix-$PHOENIX_VERSION-HBase-$HBASE_MAJOR-client.jar /opt/hbase/lib/ \
+    && cp -rf /opt/phoenix/bin/tephra /opt/hbase/bin/tephra \
+    && cp -rf /opt/phoenix/bin/tephra-env.sh /opt/hbase/bin/tephra-env.sh \ 
+    && mv /opt/config/bootstrap-phoenix.sh / \
+    && rm -rf  /var/tmp/* /tmp/* \
+    && chmod 777 -R /opt && chown root:root /bootstrap-phoenix.sh&& chmod 777 /bootstrap-phoenix.sh
 
-# bootstrap-phoenix
-ADD bootstrap-phoenix.sh /etc/bootstrap-phoenix.sh
-RUN chown root:root /etc/bootstrap-phoenix.sh
-RUN chmod 700 /etc/bootstrap-phoenix.sh
-
-CMD ["/etc/bootstrap-phoenix.sh", "-bash"]
+CMD ["/bootstrap-phoenix.sh", "-bash"]
 
 EXPOSE 8765
