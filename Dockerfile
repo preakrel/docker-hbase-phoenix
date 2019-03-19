@@ -22,7 +22,7 @@ RUN cd /opt \
     && rm -rf hbase-$HBASE_VERSION-bin.tar.gz \
     && rm -rf /opt/hbase/docs \
     && rm /opt/hbase/conf/hbase-site.xml \
-    && mv /opt/config/hbase-site.xml /opt/hbase/conf/hbase-site.xml\
+    && mv /opt/config/hbase-site.xml /opt/hbase/conf/hbase-site.xml \
     # phoenix
     && wget -q -O apache-phoenix-$PHOENIX_VERSION-HBase-$HBASE_MAJOR-bin.tar.gz $WEB/phoenix/apache-phoenix-$PHOENIX_VERSION-HBase-$HBASE_MAJOR/bin/apache-phoenix-$PHOENIX_VERSION-HBase-$HBASE_MAJOR-bin.tar.gz \
     && tar -xzf apache-phoenix-$PHOENIX_VERSION-HBase-$HBASE_MAJOR-bin.tar.gz  \
