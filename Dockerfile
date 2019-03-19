@@ -8,7 +8,11 @@ COPY config/* /opt/config/
 USER root
 WORKDIR /opt
 
-RUN chmod -R 777 /opt && cd /opt \
+RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/' /etc/apt/sources.list \
+    && apt-get -y update --fix-missing \
+    && apt-get clean \
+    && chmod -R 777 /opt \
+    && cd /opt \
     # zookeeper
     && wget -q -O zookeeper-$ZOOKEEPER_VERSION.tar.gz $WEB/zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz \
     && tar -zxf zookeeper-$ZOOKEEPER_VERSION.tar.gz \
