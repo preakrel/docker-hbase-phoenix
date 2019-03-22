@@ -3,13 +3,13 @@ MAINTAINER 1396981439@qq.com
 
 ENV ZOOKEEPER_VERSION=3.4.13 HBASE_MAJOR=2.0 HBASE_MINOR=4 HBASE_VERSION="$HBASE_MAJOR}.${HBASE_MINOR}" PHOENIX_VERSION=5.0.0  WEB=http://mirrors.hust.edu.cn/apache
 
-COPY config/* /opt/config/
+
 USER root
 WORKDIR /opt
-RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/' /etc/apt/sources.list \
-    && apt-get -y update --fix-missing && apt-get clean  \
-    && apt-get autoclean \
-    && apt-get autoremove && chmod -R 777 /opt && cd /opt \
+
+COPY config/* /opt/config/
+
+RUN cd /opt \
     # zookeeper
     && wget -q -O zookeeper-$ZOOKEEPER_VERSION.tar.gz $WEB/zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz \
     && tar -zxf zookeeper-$ZOOKEEPER_VERSION.tar.gz \
