@@ -1,5 +1,5 @@
 FROM daocloud.io/php_ity/docker-hadoop
-MAINTAINER 1396981439@qq.com
+MAINTAINER PHP
 
 ENV ZOOKEEPER_VERSION=3.4.13 HBASE_MAJOR=2.0 HBASE_MINOR=4 HBASE_VERSION="$HBASE_MAJOR}.${HBASE_MINOR}" PHOENIX_VERSION=5.0.0  WEB=http://mirrors.hust.edu.cn/apache
 
@@ -9,8 +9,8 @@ WORKDIR /opt
 
 COPY config/* /opt/config/
 
-RUN cd /opt \
-    # zookeeper
+RUN apt-get -y update && apt-get -y upgrade \
+    && cd opt \
     && wget -q -O zookeeper-$ZOOKEEPER_VERSION.tar.gz $WEB/zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz \
     && tar -zxf zookeeper-$ZOOKEEPER_VERSION.tar.gz \
     && mv /opt/zookeeper-$ZOOKEEPER_VERSION /opt/zookeeper \
